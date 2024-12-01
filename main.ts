@@ -7,10 +7,10 @@ async function readFile(file: string): Promise<string> {
 const data = await readFile("input");
 const splitData = data.split("\n");
 
-let a = [],b = [];
+const a = [],b = [];
 
 for (const row in splitData) {
-    let [x, y] = splitData[row].split("   ");
+    const [x, y] = splitData[row].split("   ");
     a.push(parseInt(x));
     b.push(parseInt(y));
 }
@@ -22,7 +22,20 @@ let c = 0;
 
 for (let i = 0; i < a.length; i++) {
     c += (Math.abs(a[i] - b[i]));
-    console.log(a[i] - b[i]);
 }
 
-console.log(c);
+console.log("Part 1 Answer: ", c);
+
+c = 0;
+for (let i = 0; i < a.length; i++) {
+    let hits = 0;
+    for (let x = 0; x < b.length; x++) {
+        if (a[i] === b[x]) {
+            hits++;
+        }
+    }
+    c += a[i] * hits;
+    hits = 0;
+}
+
+console.log("Part 2 Answer: ", c);
