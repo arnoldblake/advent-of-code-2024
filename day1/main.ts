@@ -1,13 +1,9 @@
-async function readFile(file: string): Promise<string> {
-    const decoder = new TextDecoder("utf-8");
-    const data = await Deno.readFile(file);
-    return decoder.decode(data);
-}
+import { readFile } from "../lib/readFile.ts";
 
 const data = await readFile("input");
 const splitData = data.split("\n");
 
-const a = [],b = [];
+const a: number[] = [],b: number[] = [];
 
 for (const row in splitData) {
     const [x, y] = splitData[row].split("   ");
