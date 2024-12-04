@@ -8,3 +8,6 @@ The day 1 challenges were relatively straight forward. It took a bit of time and
 These challenges were quite a bit harder than yesterday. Quite a bit more googling and AI explaining.
 I'm having AI generate solutions based off of mine and I can see how knowing some tricks makes things
 much simpler. 
+
+### Day 3 Part 1
+A moderate challenge. I implemented some of the tricks I learned though the AI refactor of the previous challenges.
