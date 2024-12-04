@@ -6,7 +6,7 @@ import { readFile } from "../lib/readFile.ts";
 // or correct mult instructions.
 
 const data = await readFile("input");
-let mults: number[][] = [];
+const mults: number[][] = [];
 
 for (let i = 0; i < data.length; i++) {
     const chunk = data.slice(i, i + 4);
