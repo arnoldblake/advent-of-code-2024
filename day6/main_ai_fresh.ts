@@ -1,61 +1,64 @@
-import { readFile } from "../lib/readFile.ts";
+type Position = { x: number; y: number };
+type Direction = "up" | "right" | "down" | "left";
 
-// Directions: up, right, down, left
-const directions = [
-  { dx: -1, dy: 0 }, // up
-  { dx: 0, dy: 1 }, // right
-  { dx: 1, dy: 0 }, // down
-  { dx: 0, dy: -1 }, // left
-];
+const directions: Record<Direction, Position> = {
+  up: { x: 0, y: -1 },
+  right: { x: 1, y: 0 },
+  down: { x: 0, y: 1 },
+  left: { x: -1, y: 0 },
+};
 
-async function main() {
-  const input = (await readFile("input")).split("\n").map((line) =>
-    line.split("")
-  );
+const turnRight: Record<Direction, Direction> = {
+  up: "right",
+  right: "down",
+  down: "left",
+  left: "up",
+};
 
-  // Find the initial position and direction of the guard
-  let guardX = -1, guardY = -1, directionIndex = -1;
-  for (let i = 0; i < input.length; i++) {
-    for (let j = 0; j < input[i].length; j++) {
-      if (input[i][j] === "^") {
-        guardX = i;
-        guardY = j;
-        directionIndex = 0; // up
-      }
+function findGuard(map: string[]): { pos: Position; dir: Direction } {
+  for (let y = 0; y < map.length; y++) {
+    for (let x = 0; x < map[y].length; x++) {
+      if (map[y][x] === "^") return { pos: { x, y }, dir: "up" };
     }
   }
-
-  // Set to keep track of visited positions
-  const visited = new Set();
-  visited.add(`${guardX},${guardY}`);
-
-  // Function to check if a position is within the map bounds
-  const isInBounds = (x: number, y: number) =>
-    x >= 0 && x < input.length && y >= 0 && y < input[0].length;
-
-  // Simulate the guard's movement
-  while (true) {
-    const { dx, dy } = directions[directionIndex];
-    const nextX = guardX + dx;
-    const nextY = guardY + dy;
-
-    if (!isInBounds(nextX, nextY)) {
-      break; // Stop if the guard reaches the end of the map
-    }
-
-    if (input[nextX][nextY] !== "#") {
-      // Move forward
-      guardX = nextX;
-      guardY = nextY;
-      visited.add(`${guardX},${guardY}`);
-    } else {
-      // Turn right
-      directionIndex = (directionIndex + 1) % 4;
-    }
-  }
-
-  // Output the number of distinct positions visited
-  console.log(visited.size - 1); // Adjust the count by subtracting 1
+  throw new Error("Guard not found");
 }
 
-main();
+function isInBounds(pos: Position, map: string[]): boolean {
+  return pos.y >= 0 && pos.y < map.length && pos.x >= 0 &&
+    pos.x < map[0].length;
+}
+
+function countGuardPositions(input: string): number {
+  const map = input.split("\n").filter((line) => line.length > 0);
+  const visited = new Set<string>();
+  let { pos, dir } = findGuard(map);
+
+  while (true) {
+    visited.add(`${pos.x},${pos.y}`);
+
+    const nextPos = {
+      x: pos.x + directions[dir].x,
+      y: pos.y + directions[dir].y,
+    };
+
+    // Check if next position is out of bounds
+    if (!isInBounds(nextPos, map)) {
+      break;
+    }
+
+    // If we hit an obstacle, turn right
+    if (map[nextPos.y][nextPos.x] === "#") {
+      dir = turnRight[dir];
+      continue;
+    }
+
+    pos = nextPos;
+  }
+
+  return visited.size;
+}
+
+export function part1(input: string): number {
+  return countGuardPositions(input);
+}
